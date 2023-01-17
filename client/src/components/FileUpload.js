@@ -56,7 +56,7 @@ const FileUpload = () => {
       });
 
       setMessage(
-        `File Uploaded: ${processedFilePath}... Process: ${processImageMessage}.  Transfer: ${transferMessage}.`
+        `File Upload: ${processedFilePath}\nFile Processed: ${processImageMessage}\nFile Transfer: ${transferMessage}.`
       );
 
       setFile("");
@@ -75,7 +75,7 @@ const FileUpload = () => {
       {message && <Message msg={message} />}
       <form onSubmit={onSubmit}>
         <div class="row">
-          <div className="col-sm-4">
+          <div className="col-sm-6">
             <input
               type="file"
               id="customFile"
@@ -86,20 +86,27 @@ const FileUpload = () => {
               {filename}
             </label>
           </div>
-          <div className="col-sm-4">
+          <div className="col-sm-6">
             <input
               type="submit"
               value="Upload"
-              className="btn btn-primary btn-block mt-4"
+              className="btn btn-primary btn-block btn-custom"
             />
           </div>
         </div>
-        <Progress percentage={uploadPercentage} />
+        <div class="row">
+          <div className="col-sm-12 mt-4" >
+            <Progress percentage={uploadPercentage} />
+          </div>
+        </div>
+
       </form>
       {uploadedFile ? (
         <div className="row mt-8">
           <div className="col-md-6 m-auto">
-            <h4 className="text-center">{uploadedFile.processedFileName}</h4>
+            {uploadedFile.processedFileName ?  (
+              <h4 className="text-center">File Uploaded</h4>
+              ) : null}
             <img
               style={{ width: "100%" }}
               src={uploadedFile.processedFilePath}
@@ -107,7 +114,14 @@ const FileUpload = () => {
             />
           </div>
         </div>
-      ) : null}
+      ) : 
+      (
+        <div class="row">
+        <div className="col-sm-12 mt-4" ></div>
+          <div className="col-sm-12 mt-4" ></div>
+        </div>
+      )
+      }
     </Fragment>
   );
 };

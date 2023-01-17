@@ -4,9 +4,9 @@ import FileUpload from "./components/FileUpload";
 
 const App = () => {
   return (
-    <div className="container mt-12">
-      <h4 className="display-4 text-center mb-4">
-        <i className="fab fa-react">Mower File Upload App</i>
+    <div className="container mt-12 custom-background">
+      <h4 className="display-4 text-center mb-4 title">
+        Mower File Upload App
       </h4>
 
       <FileUpload />

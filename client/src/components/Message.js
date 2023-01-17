@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const Message = ({ msg }) => {
   return (
     <div className="alert alert-info alert-dismissible fade show" role="alert">
-      {msg}
+      {msg.split('\n').map((item) => <p>{item}</p>)}
       <button
         type="button"
         className="close"
