@@ -19,56 +19,58 @@ const FileUpload = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", file);
+    // if we have a filename
+    if(filename && filename!==null) {
+      try {
+        const res = await axios.post("/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            setUploadPercentage(
+              parseInt(
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              )
+            );
 
-    try {
-      const res = await axios.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          setUploadPercentage(
-            parseInt(
-              Math.round((progressEvent.loaded * 100) / progressEvent.total)
-            )
-          );
+            // Clear percentage
+            setTimeout(() => setUploadPercentage(0), 10000);
+          },
+        });
+        //const { fileName, filePath, processImageMessage } = res.data;
+        //setUploadedFile({ fileName, filePath });
+        //setMessage(`File Uploaded ${processImageMessage}` );
+        const {
+          fileName,
+          filePath,
+          processImageMessage,
+          processedFileName,
+          processedFilePath,
+          transferMessage,
+        } = res.data;
 
-          // Clear percentage
-          setTimeout(() => setUploadPercentage(0), 10000);
-        },
-      });
-      //const { fileName, filePath, processImageMessage } = res.data;
-      //setUploadedFile({ fileName, filePath });
-      //setMessage(`File Uploaded ${processImageMessage}` );
-      const {
-        fileName,
-        filePath,
-        processImageMessage,
-        processedFileName,
-        processedFilePath,
-        transferMessage,
-      } = res.data;
+        setUploadedFile({
+          fileName,
+          filePath,
+          processedFileName,
+          processedFilePath,
+        });
 
-      setUploadedFile({
-        fileName,
-        filePath,
-        processedFileName,
-        processedFilePath,
-      });
+        setMessage(
+          `File Upload: ${processedFilePath}\nFile Processed: ${processImageMessage}\nFile Transfer: ${transferMessage}.`
+        );
 
-      setMessage(
-        `File Upload: ${processedFilePath}\nFile Processed: ${processImageMessage}\nFile Transfer: ${transferMessage}.`
-      );
-
-      setFile("");
-      setFilename("Choose File");
-    } catch (error) {
-      if (error.response.status === 500) {
-        setMessage("There was a problem with the server");
-      } else {
-        setMessage(error.response.data.message);
+        setFile("");
+        setFilename("Choose File");
+      } catch (error) {
+        if (error.response.status === 500) {
+          setMessage("There was a problem with the server");
+        } else {
+          setMessage(error.response.data.message);
+        }
       }
-    }
-  };
+  }
+};
 
   return (
     <Fragment>

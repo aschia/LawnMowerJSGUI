@@ -59,11 +59,19 @@ const resizeImageAndGrayscale = async (
   let message = "ok";
   try {
     await sharp(originalFilePathAndName)
-      .resize({
+      /*.resize({
         width: 640,
         height: 480,
+      })*/
+      .resize(512, 512, {
+        kernel: sharp.kernel.nearest,
+        fit: 'contain',
+        position: 'right top',
+        background: { r: 255, g: 255, b: 255, alpha: 0.5 }
       })
       .grayscale()
+      //.sharpen({ sigma: 2 })
+      .threshold(123)
       //.toFormat("jpeg", { mozjpeg: true })
       .toFile(processedFilePathAndName);
   } catch (error) {
