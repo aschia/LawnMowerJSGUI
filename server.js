@@ -14,6 +14,9 @@ app.post("/upload", (req, res) => {
   }
 
   const file = req.files.file;
+  const bwThreshold = parseInt(req.body.bwThreshold);
+
+  console.log(bwThreshold);
   // We need unique file name to save it in folder and then use filename to access it. I have replace space with - and concatinated file name with Date String. We can also used uuid package as well.
   const processedFileName = `processed.${new Date().getTime()}-${file.name.replaceAll(
     " ",
@@ -29,7 +32,7 @@ app.post("/upload", (req, res) => {
     }
 
     let processImageMessage = "";
-    resizeImageAndGrayscale(fileWithPath, processedFileWithPath).then(
+    resizeImageAndGrayscale(fileWithPath, bwThreshold, processedFileWithPath).then(
       (result) => {
         processImageMessage = result;
       }
@@ -54,6 +57,7 @@ app.post("/upload", (req, res) => {
 
 const resizeImageAndGrayscale = async (
   originalFilePathAndName,
+  bwThreshold,
   processedFilePathAndName
 ) => {
   let message = "ok";
@@ -71,7 +75,7 @@ const resizeImageAndGrayscale = async (
       })
       .grayscale()
       //.sharpen({ sigma: 2 })
-      .threshold(123)
+      .threshold(bwThreshold) //bwThreshold) // != null ? bwThreshold : 123)
       //.toFormat("jpeg", { mozjpeg: true })
       .toFile(processedFilePathAndName);
   } catch (error) {

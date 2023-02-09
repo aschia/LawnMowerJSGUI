@@ -10,6 +10,14 @@ const FileUpload = () => {
   const [message, setMessage] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
+   // the Black and White Threshold
+   const [bwThreshold, setBwThreshold] = useState(100);
+
+   // This function is called when the first range slider changes
+   const changeBwThreshold = (event) => {
+    setBwThreshold(event.target.value);
+   };
+
   const onChange = (e) => {
     setFile(e.target.files[0]);
     setFilename(e.target.files[0].name);
@@ -19,6 +27,7 @@ const FileUpload = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("bwThreshold", bwThreshold);
     // if we have a filename
     if(filename && filename!==null) {
       try {
@@ -88,6 +97,7 @@ const FileUpload = () => {
               {filename}
             </label>
           </div>
+         
           <div className="col-sm-6">
             <input
               type="submit"
@@ -95,6 +105,7 @@ const FileUpload = () => {
               className="btn btn-primary btn-block btn-custom"
             />
           </div>
+
         </div>
         <div class="row">
           <div className="col-sm-12 mt-4" >
@@ -114,6 +125,20 @@ const FileUpload = () => {
               src={uploadedFile.processedFilePath}
               alt={uploadedFile.processedFileName}
             />
+            <br/>
+            <p>{bwThreshold}</p>
+
+          <div className="col-sm-6">
+                  <input
+                      type='range'
+                      onChange={changeBwThreshold}
+                      min={1}
+                      max={255}
+                      step={10}
+                      value={bwThreshold}
+                      className='custom-slider'>
+                  </input>
+          </div>
           </div>
         </div>
       ) : 
