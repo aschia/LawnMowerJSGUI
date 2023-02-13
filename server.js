@@ -8,7 +8,7 @@ const app = express();
 app.use(fileUpload());
 
 // Upload Endpint
-app.post("/upload", (req, res) => {
+  app.post("/upload", (req, res) => {
   if (req.files === null) {
     return res.status(400).json({ message: "No file uploaded" });
   }
@@ -39,6 +39,7 @@ app.post("/upload", (req, res) => {
     );
 
     let transferMessage = "";
+    /*
     // the function has to be asynchronous, so we have to return the message via then()
     transferTheFile(processedFileWithPath).then((result) => {
       transferMessage = result;
@@ -52,8 +53,73 @@ app.post("/upload", (req, res) => {
         transferMessage,
       });
     });
+    */
+   // send result back to the web page 
+   res.json({
+      fileName: file.name,
+      filePath: `/uploads/${file.name}`,
+      processImageMessage: processImageMessage,
+      processedFileName,
+      processedFilePath: `/uploads/${processedFileName}`,
+      transferMessage,
+    });
+    
   });
 });
+
+app.post("/sendFile", (req, res) => {
+  if (req.body.processedFileName === null) {
+    return res.status(400).json({ message: "No processedFileName" });
+  }
+    // the path of the processed file we are going to send to the lawnmower
+    const fileWithPathToSend = req.body.processedFilePath;
+    const filenameToSend = req.body.processedFileName;
+    let processedFileWithPath = `${__dirname}/client/public/uploads/${filenameToSend}`;
+
+    let transferMessage = "";
+    // the function has to be asynchronous, so we have to return the message via then()
+    transferTheFile(processedFileWithPath).then((result) => {
+      transferMessage = result;
+
+      // return this to the web page
+      res.json({
+        transferMessage,
+      });
+    });
+  });
+
+  app.post("/processFile", (req, res) => {
+    if (req.body.processedFileName === null) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+      // the path of the processed file we are going to send to the lawnmower
+      // const fileWithPathToSend = req.body.processedFilePath;
+      const fileName = req.body.fileName;
+      let originalFileWithPath = `${__dirname}/client/public/uploads/${fileName}`;
+      const processedFileName = req.body.processedFileName;
+      let processedFileWithPath = `${__dirname}/client/public/uploads/${processedFileName}`;
+
+      const bwThreshold = parseInt(req.body.bwThreshold);
+
+      let processImageMessage = "";
+      resizeImageAndGrayscale(originalFileWithPath, bwThreshold, processedFileWithPath).then(
+        (result) => {
+          processImageMessage = result;
+        }
+      );
+  
+        // return this to the web page
+        res.json({
+          fileName: fileName,
+          filePath: `/uploads/${fileName}`,
+          processImageMessage,
+          processedFileName,
+          processedFilePath: `/uploads/${processedFileName}`,
+        });
+
+    });
+
+
 
 const resizeImageAndGrayscale = async (
   originalFilePathAndName,

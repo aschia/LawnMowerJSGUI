@@ -7,6 +7,7 @@ const FileUpload = () => {
   const [file, setFile] = useState("");
   const [filename, setFilename] = useState("Choose File");
   const [uploadedFile, setUploadedFile] = useState({});
+  const [sentFileToLawnmower, setSentFileToLawnmower] = useState({});
   const [message, setMessage] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
@@ -23,8 +24,134 @@ const FileUpload = () => {
     setFilename(e.target.files[0].name);
   };
 
-  const onSubmit = async (e) => {
+  const onUpdateThresholdClick = async (e) => {
     e.preventDefault();
+    debugger;
+    const formData = new FormData();
+    formData.append("fileName", uploadedFile.fileName);
+    formData.append("processedFileName", uploadedFile.processedFileName);
+
+    formData.append("bwThreshold", bwThreshold);
+
+    // if we have a filename
+
+    if(uploadedFile.processedFileName == undefined || uploadedFile.processedFileName == null) {
+      setMessage("There is no processedFileName.");
+    }
+    else {
+      try {
+        const res = await axios.post("/processFile", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            setUploadPercentage(
+              parseInt(
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              )
+            );
+
+            // Clear percentage
+            setTimeout(() => setUploadPercentage(0), 10000);
+          },
+        });
+        //const { fileName, filePath, processImageMessage } = res.data;
+        //setUploadedFile({ fileName, filePath });
+        //setMessage(`File Uploaded ${processImageMessage}` );
+        const {
+          fileName,
+          filePath,
+          processImageMessage,
+          processedFileName,
+          processedFilePath,
+          transferMessage,
+        } = res.data;
+
+
+        setUploadedFile({
+          fileName,
+          filePath,
+          processedFileName,
+          processedFilePath,
+        });
+
+        setMessage(
+          `File Processed: ${processImageMessage}. ${processedFileName}`
+        );
+
+        //setFile("");
+        //setFilename("Choose File");
+      } catch (error) {
+        if (error.response.status === 500) {
+          setMessage("There was a problem with the server");
+        } else {
+          setMessage(error.response.data.message);
+        }
+      }
+    }
+  };
+  
+  const onSendToLawnmowerClick = async (e) => {
+    e.preventDefault();
+    debugger;
+    const formData = new FormData();
+    formData.append("processedFileName", uploadedFile.processedFileName);
+    formData.append("processedFilePath", uploadedFile.processedFilePath);
+
+    // if we have a filename
+
+    if(uploadedFile.processedFileName == undefined || uploadedFile.processedFileName == null) {
+      setMessage("There is no processedFileName.");
+    }
+    else {
+      try {
+        const res = await axios.post("/sendFile", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            setUploadPercentage(
+              parseInt(
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              )
+            );
+
+            // Clear percentage
+            setTimeout(() => setUploadPercentage(0), 10000);
+          },
+        });
+        //const { fileName, filePath, processImageMessage } = res.data;
+        //setUploadedFile({ fileName, filePath });
+        //setMessage(`File Uploaded ${processImageMessage}` );
+        const {
+          transferMessage
+        } = res.data;
+/*
+        setSentFileToLawnmower({
+          fileName,
+          filePath,
+          processedFileName,
+          processedFilePath,
+        });
+*/
+        setMessage(
+          `File Transfer: ${transferMessage}.`
+        );
+
+        setFile("");
+        setFilename("Choose File");
+      } catch (error) {
+        if (error.response.status === 500) {
+          setMessage("There was a problem with the server");
+        } else {
+          setMessage(error.response.data.message);
+        }
+      }
+  }
+  };
+  const onUploadClick = async (e) => {
+    e.preventDefault();
+    // debugger;
     const formData = new FormData();
     formData.append("file", file);
     formData.append("bwThreshold", bwThreshold);
@@ -84,7 +211,7 @@ const FileUpload = () => {
   return (
     <Fragment>
       {message && <Message msg={message} />}
-      <form onSubmit={onSubmit}>
+      <form >
         <div class="row">
           <div className="col-sm-6">
             <input
@@ -102,6 +229,7 @@ const FileUpload = () => {
             <input
               type="submit"
               value="Upload"
+              onClick={onUploadClick}
               className="btn btn-primary btn-block btn-custom"
             />
           </div>
@@ -127,8 +255,7 @@ const FileUpload = () => {
             />
             <br/>
             <p>{bwThreshold}</p>
-
-          <div className="col-sm-6">
+          <div className="col-sm-4">
                   <input
                       type='range'
                       onChange={changeBwThreshold}
@@ -138,6 +265,22 @@ const FileUpload = () => {
                       value={bwThreshold}
                       className='custom-slider'>
                   </input>
+          </div>
+          <div className="col-sm-6">
+            <input
+              type="submit"
+              value="Update Threshold" 
+              onClick={onUpdateThresholdClick}
+              className="btn btn-primary btn-block btn-custom"
+            />
+          </div>
+          <div className="col-sm-6">
+            <input
+              type="submit"
+              value="Send To Lawnmower" 
+              onClick={onSendToLawnmowerClick}
+              className="btn btn-primary btn-block btn-custom"
+            />
           </div>
           </div>
         </div>
