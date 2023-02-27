@@ -3,6 +3,7 @@ const fileUpload = require("express-fileupload");
 const sharp = require("sharp");
 const fabric = require("fabric");
 const { Client } = require("node-scp");
+var fs = require('fs');
 
 const app = express();
 app.use(fileUpload());
@@ -67,6 +68,7 @@ app.use(fileUpload());
   });
 });
 
+// after we send the file, we will remove it from the server
 app.post("/sendFile", (req, res) => {
   if (req.body.processedFileName === null) {
     return res.status(400).json({ message: "No processedFileName" });
@@ -77,8 +79,9 @@ app.post("/sendFile", (req, res) => {
     let processedFileWithPath = `${__dirname}/client/public/uploads/${filenameToSend}`;
 
     let transferMessage = "";
+    let deleteFileWhenDone = true;
     // the function has to be asynchronous, so we have to return the message via then()
-    transferTheFile(processedFileWithPath).then((result) => {
+    transferTheFile(processedFileWithPath, deleteFileWhenDone).then((result) => {
       transferMessage = result;
 
       // return this to the web page
@@ -152,8 +155,11 @@ const resizeImageAndGrayscale = async (
   return message;
 };
 
-const transferTheFile = async (filename) => {
+const transferTheFile = async (filename, onlyDeleteFileWhenSuccessful) => {
   let message = "start";
+  let deleteErrorMessage = "";
+  let success = false;
+
   try {
     // TODO: put the rasp pi scp details here at some point
     const client = await Client({
@@ -171,12 +177,24 @@ const transferTheFile = async (filename) => {
     );
 
     client.close(); // remember to close connection after you finish
+    success = true;
   } catch (e) {
     message = e.message;
     console.log(e);
+    success = false;
   }
 
-  return message;
+    // TODO:  When we have the endpoint available, use this
+    //if (onlyDeleteFileWhenSuccessful && success){
+    // delete it everytime for now
+    if (onlyDeleteFileWhenSuccessful){
+    fs.unlink(filename,
+       (err) => { deleteErrorMessage = err })
+       ;
+  }
+
+
+  return message + deleteErrorMessage;
 };
 
 app.listen(5000, () => console.log("Server started..."));

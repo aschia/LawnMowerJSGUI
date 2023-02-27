@@ -24,6 +24,7 @@ const FileUpload = () => {
     setFilename(e.target.files[0].name);
   };
 
+  // TODO: Make sure the imege is refreshed on client
   const onUpdateThresholdClick = async (e) => {
     e.preventDefault();
     debugger;
@@ -75,6 +76,8 @@ const FileUpload = () => {
           processedFilePath,
         });
 
+        // TODO: Force file to refresh on the client
+        
         setMessage(
           `File Processed: ${processImageMessage}. ${processedFileName}`
         );
@@ -91,6 +94,7 @@ const FileUpload = () => {
     }
   };
   
+  // TODO: Hide Threshold Slider and Update Threshold button
   const onSendToLawnmowerClick = async (e) => {
     e.preventDefault();
     debugger;
@@ -149,6 +153,8 @@ const FileUpload = () => {
       }
   }
   };
+
+  // TODO: After upload we can show the  Threshold slider, Update Threshold Button, and Send to Lawnmower buttons
   const onUploadClick = async (e) => {
     e.preventDefault();
     // debugger;
@@ -197,7 +203,7 @@ const FileUpload = () => {
         );
 
         setFile("");
-        setFilename("Choose File");
+        setFilename("Choose File"); 
       } catch (error) {
         if (error.response.status === 500) {
           setMessage("There was a problem with the server");
@@ -250,7 +256,7 @@ const FileUpload = () => {
               ) : null}
             <img
               style={{ width: "100%" }}
-              src={uploadedFile.processedFilePath}
+              src={uploadedFile.processedFilePath + `?t=${Date.now()}`}
               alt={uploadedFile.processedFileName}
             />
             <br/>
