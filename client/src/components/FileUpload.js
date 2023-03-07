@@ -10,6 +10,7 @@ const FileUpload = () => {
   const [sentFileToLawnmower, setSentFileToLawnmower] = useState({});
   const [message, setMessage] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [stepName, setStepName] = useState("");
 
    // the Black and White Threshold
    const [bwThreshold, setBwThreshold] = useState(100);
@@ -204,6 +205,8 @@ const FileUpload = () => {
 
         setFile("");
         setFilename("Choose File"); 
+        setStepName("Uploaded");
+
       } catch (error) {
         if (error.response.status === 500) {
           setMessage("There was a problem with the server");
@@ -248,48 +251,57 @@ const FileUpload = () => {
         </div>
 
       </form>
-      {uploadedFile ? (
-        <div className="row mt-8">
-          <div className="col-md-6 m-auto">
-            {uploadedFile.processedFileName ?  (
-              <h4 className="text-center">File Uploaded</h4>
-              ) : null}
-            <img
-              style={{ width: "100%" }}
-              src={uploadedFile.processedFilePath + `?t=${Date.now()}`}
-              alt={uploadedFile.processedFileName}
-            />
-            <br/>
-            <p>{bwThreshold}</p>
-          <div className="col-sm-4">
-                  <input
-                      type='range'
-                      onChange={changeBwThreshold}
-                      min={1}
-                      max={255}
-                      step={10}
-                      value={bwThreshold}
-                      className='custom-slider'>
-                  </input>
-          </div>
-          <div className="col-sm-6">
-            <input
-              type="submit"
-              value="Update Threshold" 
-              onClick={onUpdateThresholdClick}
-              className="btn btn-primary btn-block btn-custom"
-            />
-          </div>
-          <div className="col-sm-6">
-            <input
-              type="submit"
-              value="Send To Lawnmower" 
-              onClick={onSendToLawnmowerClick}
-              className="btn btn-primary btn-block btn-custom"
-            />
-          </div>
-          </div>
+      {uploadedFile && stepName !== "" ? (
+        <Fragment>
+        <div class="row">
+            <div className="col-md-8 m-auto">
+              {uploadedFile.processedFileName ?  (
+                <h4 className="text-center">File Uploaded</h4>
+                ) : null}
+              <img
+                style={{ width: "100%" }}
+                src={uploadedFile.processedFilePath + `?t=${Date.now()}`}
+                alt={uploadedFile.processedFileName}
+              />
+              <br/>
+            </div>
         </div>
+        <div className="row">
+            <div className="col-sm-6 m-auto">
+                <span className="larger-text">{bwThreshold}</span>&nbsp;
+                <input
+                            type='range'
+                            onChange={changeBwThreshold}
+                            min={1}
+                            max={255}
+                            step={10}
+                            value={bwThreshold}
+                            className='custom-slider'>
+                        </input>
+            </div>
+            <div className="col-sm-6 m-auto" > </div>
+        </div>
+        <div className="row">
+              <div className="col-sm-6 m-auto">
+                      
+                <input
+                  type="submit"
+                  value="Update Threshold" 
+                  onClick={onUpdateThresholdClick}
+                  className="btn btn-primary btn-block btn-custom"
+                />
+              </div>
+              <div className="col-sm-6 m-auto">
+                <input
+                  type="submit"
+                  value="Send To Lawnmower" 
+                  onClick={onSendToLawnmowerClick}
+                  className="btn btn-primary btn-block btn-custom"
+                />
+              </div>
+          </div>
+        </Fragment>
+
       ) : 
       (
         <div class="row">
