@@ -235,12 +235,16 @@ const FileUpload = () => {
           </div>
          
           <div className="col-sm-6">
+          { filename !== "Choose File" ? (
+            <Fragment>
             <input
               type="submit"
               value="Upload"
               onClick={onUploadClick}
               className="btn btn-primary btn-block btn-custom"
             />
+            </Fragment>
+             ) : ""}
           </div>
 
         </div>
@@ -259,7 +263,7 @@ const FileUpload = () => {
                 <h4 className="text-center">File Uploaded</h4>
                 ) : null}
               <img
-                style={{ width: "100%" }}
+              className = "main-image"
                 src={uploadedFile.processedFilePath + `?t=${Date.now()}`}
                 alt={uploadedFile.processedFileName}
               />

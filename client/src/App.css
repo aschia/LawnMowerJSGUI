@@ -3,11 +3,29 @@
     background-color: #007bff;
     border-color: #003f82;
     font-weight: bolder; 
-    
+}
+.btn-custom-alter {
+    color: #fff;
+    background-color: #05611c;
+    border-color: #003f82;
+    font-weight: bolder; 
+}
+.alert-item {
+    padding : 0;
+    margin : 0;
+    line-height : 12x;
 }
 .title {
     font-weight: bolder; 
 
+}
+.main-image {
+    width: "30vw";
+    min-width:"400px";
+    display: table-cell;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 .larger-text {
     font-weight: bolder; 
