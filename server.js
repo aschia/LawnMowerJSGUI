@@ -19,7 +19,7 @@ app.use(fileUpload());
 
   console.log(bwThreshold);
   // We need unique file name to save it in folder and then use filename to access it. I have replace space with - and concatinated file name with Date String. We can also used uuid package as well.
-  const processedFileName = `processed.${new Date().getTime()}-${file.name.replaceAll(
+  let processedFileName = `processed.${new Date().getTime()}-${file.name.replaceAll(
     " ",
     "-"
   )}`;
@@ -33,6 +33,9 @@ app.use(fileUpload());
     }
 
     let processImageMessage = "";
+    // change to jpeg file extension
+    processedFileName = processedFileName.replace(".png",".jpg");
+    processedFileWithPath = processedFileWithPath.replace(".png",".jpg");
     resizeImageAndGrayscale(fileWithPath, bwThreshold, processedFileWithPath).then(
       (result) => {
         processImageMessage = result;
@@ -130,6 +133,9 @@ const resizeImageAndGrayscale = async (
   processedFilePathAndName
 ) => {
   let message = "ok";
+  debugger;
+
+  //.replace(".tiff",".jpg").replace(".gif",".jpg").replace(".bmp",".jpg");
   try {
     await sharp(originalFilePathAndName)
       /*.resize({
@@ -146,6 +152,7 @@ const resizeImageAndGrayscale = async (
       //.sharpen({ sigma: 2 })
       .threshold(bwThreshold) //bwThreshold) // != null ? bwThreshold : 123)
       //.toFormat("jpeg", { mozjpeg: true })
+      .toFormat('jpg')
       .toFile(processedFilePathAndName);
   } catch (error) {
     message = error.message;

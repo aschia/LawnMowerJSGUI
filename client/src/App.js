@@ -18,7 +18,7 @@ const App = () => {
 
     <div className="container mt-12 " style={styles.container}>
       <h4 className="display-4 text-center mb-4 title">
-        Mower File Upload App
+        File Upload
       </h4>
 
       <FileUpload />
