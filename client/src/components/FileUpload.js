@@ -21,8 +21,11 @@ const FileUpload = () => {
    };
 
   const onChange = (e) => {
-    setFile(e.target.files[0]);
-    setFilename(e.target.files[0].name);
+    // don't bluw up if you cancel the browse file operation
+    if (e.target.files[0]) {
+      setFile(e.target.files[0]);
+      setFilename( e.target.files[0].name);
+    } 
   };
 
   // TODO: Make sure the imege is refreshed on client
@@ -199,9 +202,11 @@ const FileUpload = () => {
           processedFilePath,
         });
 
-        setMessage(
-          `File Upload: ${processedFilePath}\nFile Processed: ${processImageMessage}\nFile Transfer: ${transferMessage}.`
-        );
+        let msg = processedFilePath ? `File Upload: ${processedFilePath}\n` : "";
+        msg += processImageMessage ? `File Processed: ${processImageMessage}\n` : "";
+        msg += transferMessage ? `File Transfer: ${transferMessage}.` : "";
+
+        setMessage(msg);
 
         setFile("");
         setFilename("Choose File"); 
@@ -248,11 +253,6 @@ const FileUpload = () => {
           </div>
 
         </div>
-        <div class="row">
-          <div className="col-sm-12 mt-4" >
-            <Progress percentage={uploadPercentage} />
-          </div>
-        </div>
 
       </form>
       {uploadedFile && stepName !== "" ? (
@@ -260,7 +260,7 @@ const FileUpload = () => {
         <div class="row">
             <div className="col-md-8 m-auto">
               {uploadedFile.processedFileName ?  (
-                <h4 className="text-center">File Uploaded</h4>
+                <h4 className="text-center filename">Uploaded {uploadedFile.fileName}</h4>
                 ) : null}
               <img
               className = "main-image"
@@ -273,15 +273,19 @@ const FileUpload = () => {
         <div className="row">
             <div className="col-sm-6 m-auto">
                 <span className="larger-text">{bwThreshold}</span>&nbsp;
-                <input
-                            type='range'
-                            onChange={changeBwThreshold}
-                            min={1}
-                            max={255}
-                            step={10}
-                            value={bwThreshold}
-                            className='custom-slider'>
-                        </input>
+                <div class="slidecontainer">
+                  <input
+                          type='range'
+                          onChange={changeBwThreshold}
+                          min={1}
+                          max={255}
+                          step={10}
+                          value={bwThreshold}
+                          class="slider"
+                          style={{backgroundColor: "blue"}}
+                        >
+                    </input>
+                  </div>
             </div>
             <div className="col-sm-6 m-auto" > </div>
         </div>
@@ -314,6 +318,12 @@ const FileUpload = () => {
         </div>
       )
       }
+      <div class="row">
+          <div className="col-sm-12 mt-4" >
+            <Progress percentage={uploadPercentage} />
+          </div>
+        </div>
+
     </Fragment>
   );
 };
