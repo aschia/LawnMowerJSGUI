@@ -172,8 +172,8 @@ const transferTheFile = async (filename, onlyDeleteFileWhenSuccessful) => {
     const client = await Client({
       host: "pitunnel.com", //"34.125.170.180",
       port: 15768,
-      username: "RoboMower",
-      password: "RobotMower2022!",
+      username: "robomower",
+      password: "robomower",
       // privateKey: fs.readFileSync('./key.pem'),
       // passphrase: 'your key passphrase',
     });
